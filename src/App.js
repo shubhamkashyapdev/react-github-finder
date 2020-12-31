@@ -1,59 +1,48 @@
-import React, {Component} from 'react';
-
-import {HashRouter as Router, Route, Switch} from 'react-router-dom';
-
-// provider //
-import {Provider} from './context';
+import React, { Component } from 'react';
+import './App.css';
+import axios from 'axios';
 
 // components //
-import Contacts from './components/contacts/Contacts';
-import About from './components/pages/about';
-import Header from './components/layouts/header';
-import AddContact from './components/contacts/addContact';
-import EditContact from './components/contacts/editContact';
-import Test from './components/Test/Test';
+import Navbar from './components/layout/Navbar';
 
-import NotFound from './components/pages/notFound';
+import Users from './components/users/Users';
 
-import './App.css';
-// bootstrap //
-import 'bootstrap/dist/css/bootstrap.min.css';
+import Search from './components/users/Search';
 
 class App extends Component {
-  render() {
-
-    return (
-      <Provider>
-        <Router>
-          <div className="App">
-          <Header branding="Contact Manager" />
-          <div  className="container mb-5">
-
-    
-          <Switch>
-            
-             <Route exact path="/" component={Contacts} />
-            
-            <Route exact path="/contact/add" component={AddContact} />
-
-            <Route exact path="/contact/edit/:id" component={EditContact} />
-
-            <Route exact path="/about" component={ About } />
-
-            <Route exact path="/test" component={Test} />
-
-            <Route component={NotFound}></Route>
-          </Switch>
-
-          </div>
-        
-         </div>
-        </Router>
-      
-      </Provider>
-    );
+  state = {
+    users: [],
+    loading: false
   }
-  
+  async componentDidMount() {
+    console.log(process.env.REACT_APP_GITHUB_CLIENT_SECRET);
+
+    this.setState({loading: true});
+    const res = await axios.get(`https://api.github.com/users?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`);
+    this.setState({
+      users:res.data,
+      loading: false
+    });
+    
+  }
+ 
+
+  render() {
+   
+    return (
+      <div className="App">
+        <Navbar />
+        
+        <div className="container">
+        <Search />
+         <Users loading={this.state.users} users={this.state.users}/>
+        </div>
+        
+        
+        
+      </div>
+    )
+  }
 }
 
 export default App;
