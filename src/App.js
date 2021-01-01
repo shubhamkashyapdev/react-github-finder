@@ -44,6 +44,11 @@ import Search from './components/users/Search';
   // show alert //
   showAlert = (msg,type) => {
     this.setState({alert:{msg:msg,type:type}});
+
+    // time out //
+    setTimeout(() => {
+      this.setState({alert: null});
+    },5000);
   }
  
 
